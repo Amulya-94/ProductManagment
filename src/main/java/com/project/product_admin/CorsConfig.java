@@ -17,15 +17,36 @@ public class CorsConfig {
     public FilterRegistrationBean<CorsFilter> corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        
+
+        // Allow credentials (JWT, cookies, auth headers)
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://127.0.0.1:5173"));
-        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        
+
+        // IMPORTANT: use allowedOriginPatterns instead of allowedOrigins
+        config.setAllowedOriginPatterns(Arrays.asList("*"));
+
+        // Allowed headers
+        config.setAllowedHeaders(Arrays.asList(
+                "Origin",
+                "Content-Type",
+                "Accept",
+                "Authorization"
+        ));
+
+        // Allowed HTTP methods
+        config.setAllowedMethods(Arrays.asList(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+        ));
+
+        // Apply this config to all endpoints
         source.registerCorsConfiguration("/**", config);
-        
-        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+
+        FilterRegistrationBean<CorsFilter> bean =
+                new FilterRegistrationBean<>(new CorsFilter(source));
+
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
