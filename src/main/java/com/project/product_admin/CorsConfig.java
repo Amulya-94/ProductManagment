@@ -9,6 +9,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class CorsConfig {
@@ -18,11 +20,19 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allow credentials (JWT, cookies, auth headers)
+        // Read allowed origins from env variable (comma-separated).
+        String allowedOriginsEnv = System.getenv("ALLOWED_ORIGINS");
+        
         config.setAllowCredentials(true);
-
-        // IMPORTANT: use allowedOriginPatterns instead of allowedOrigins
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
+        if (allowedOriginsEnv != null && !allowedOriginsEnv.isBlank()) {
+            List<String> allowedOrigins = Arrays.stream(allowedOriginsEnv.split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+            config.setAllowedOrigins(allowedOrigins);
+        } else {
+            // IMPORTANT: use allowedOriginPatterns instead of allowedOrigins for *
+            config.setAllowedOriginPatterns(Arrays.asList("*"));
+        }
 
         // Allowed headers
         config.setAllowedHeaders(Arrays.asList(
@@ -46,7 +56,6 @@ public class CorsConfig {
 
         FilterRegistrationBean<CorsFilter> bean =
                 new FilterRegistrationBean<>(new CorsFilter(source));
-
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }

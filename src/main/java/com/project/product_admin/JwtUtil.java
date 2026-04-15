@@ -7,11 +7,14 @@ import java.security.Key;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "mysecretkeymysecretkeymysecretkey"; // must be long
+    @Value("${jwt.secret}")
+    private String SECRET; // mapped from application.properties / ENV
+    
     private final long EXPIRATION = 1000 * 60 * 60; // 1 hour
 
     private Key getSigningKey() {

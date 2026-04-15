@@ -49,4 +49,28 @@ The in-browser database manager is enabled for development:
 
 ---
 
+## 🚀 Deploy to Render
+
+You can host both the Backend and Frontend for free on [Render](https://render.com).
+
+### 1. Backend (Web Service)
+1. In Render, create a new **Web Service** and connect this repository.
+2. Set the **Root Directory** to `.` (the root).
+3. Set the **Environment** to `Docker` (it will automatically use the `Dockerfile`).
+4. Add the following **Environment Variables**:
+   - `JWT_SECRET`: Generate a random long string (e.g., `your_secure_random_key`), otherwise it uses the fallback.
+   - `ALLOWED_ORIGINS`: Set this to your frontend URL later (e.g., `https://your-frontend.onrender.com`).
+
+### 2. Frontend (Static Site)
+1. In Render, create a new **Static Site** and connect the same repository.
+2. Set the **Root Directory** to `product-admin-ui`.
+3. Set the **Build Command** to `npm install && npm run build`.
+4. Set the **Publish Directory** to `dist`.
+5. Add the following **Environment Variable**:
+   - `VITE_API_URL`: Set this to your backend's Render URL (e.g., `https://your-backend.onrender.com`).
+
+*Note: On Render's free tier, the H2 file database is ephemeral and resets on each deploy/restart.*
+
+---
+
 Developed for **Product Management** with a focus on simplicity and professional UI.
